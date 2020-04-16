@@ -10,9 +10,82 @@
     fetch('./data.json')
         .then((response) => response.json())
         .then((data) => {
-            console.log(data)
             const srs = []
-            const colors = {}
+            function drw(topic) {
+                let tit = ' - ministerstva'
+                let fltr = true
+                if (topic !== 'min') {
+                    tit = ' - kraje'
+                    fltr = false
+                }
+            
+                Highcharts.chart('resp_nakupy_' + topic, {
+                    chart: {
+                        type: 'scatter',
+                        zoomType: 'xy'
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    title: {
+                        text: 'Nákupy respirátorů' + tit
+                    },
+                    subtitle: {
+                        text: 'data: <a target="_blank" href="https://www.hlidacstatu.cz/texty/divoky-trh-s-respiratory/">Hlídač státu</a> a jednotlivé resorty',
+                        useHTML: true
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        endOnTick: true,
+                        showLastLabel: true,
+                        startOnTick: true,
+                        labels:{
+                            formatter: function(){
+                                return Highcharts.dateFormat('%d. %m.', this.value)
+                            }
+                        }
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'jednotková cena, s DPH'
+                        }
+                    },
+                    legend: {
+                        layout: 'horizontal',
+                        align: 'center',
+                        verticalAlign: 'bottom',
+                        backgroundColor: Highcharts.defaultOptions.chart.backgroundColor,
+                    },
+                    tooltip: {
+                        formatter: function() {
+                            return `<b>${this.series.name}</b>
+                            <br>${Highcharts.dateFormat('%d. %m.', this.x)} - ${Math.round(this.y * 100) / 100} Kč`
+                        }
+                    },
+                    plotOptions: {
+                        scatter: {
+                            marker: {
+                                radius: 5,
+                                states: {
+                                    hover: {
+                                        enabled: true,
+                                        lineColor: 'rgb(100,100,100)'
+                                    }
+                                }
+                            },
+                            states: {
+                                hover: {
+                                    marker: {
+                                        enabled: false
+                                    }
+                                }
+                            },
+                        }
+                    },
+                    series: srs.filter(s => s.name.includes('Ministerstvo') === fltr)
+                })
+            }
+
             Object.keys(data).forEach( (resort, i) => {
                 Object.keys(data[resort]).forEach(typ => {
                     srs.push({
@@ -23,74 +96,11 @@
                         color: cols[i],
                         data: data[resort][typ].map(val => [ Date.parse(val[0]), val[1] ])
                     })
-
+                    drw('min')
+                    drw('kr')
                 })
             })
 
-            Highcharts.chart('resp_nakupy', {
-                chart: {
-                    type: 'scatter',
-                    zoomType: 'xy'
-                },
-                credits: {
-                    enabled: false
-                },
-                title: {
-                    text: 'Nákupy respirátorů'
-                },
-                subtitle: {
-                    text: 'data: <a target="_blank" href="https://www.hlidacstatu.cz/texty/divoky-trh-s-respiratory/">Hlídač státu</a> a jednotlivé resorty',
-                    useHTML: true
-                },
-                xAxis: {
-                    type: 'datetime',
-                    endOnTick: true,
-                    showLastLabel: true,
-                    startOnTick: true,
-                    labels:{
-                        formatter: function(){
-                            return Highcharts.dateFormat('%d. %m.', this.value)
-                        }
-                    }
-                },
-                yAxis: {
-                    title: {
-                        text: 'jednotková cena, s DPH'
-                    }
-                },
-                legend: {
-                    layout: 'horizontal',
-                    align: 'center',
-                    verticalAlign: 'bottom',
-                    backgroundColor: Highcharts.defaultOptions.chart.backgroundColor,
-                },
-                plotOptions: {
-                    scatter: {
-                        marker: {
-                            radius: 5,
-                            states: {
-                                hover: {
-                                    enabled: true,
-                                    lineColor: 'rgb(100,100,100)'
-                                }
-                            }
-                        },
-                        states: {
-                            hover: {
-                                marker: {
-                                    enabled: false
-                                }
-                            }
-                        },
-                        tooltip: {
-                            headerFormat: '<b>{series.name}</b><br>',
-                            pointFormat: '{point.y} Kč',
-                            xDateFormat: '%Y-%m-%d',
-                            shared: true
-                        }
-                    }
-                },
-                series: srs
-            });
+           
         })
 })()
