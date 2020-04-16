@@ -8,6 +8,15 @@ d.datum = pd.to_datetime(d.datum, format='%d.%m.%Y')
 d = d[d.pouzit == 'ano']
 
 #%%
+def dph(val, comm):
+    if comm == 'bez DPH':
+        return val * 1.21
+    else:
+        return val
+
+d.kus_DPH = d.apply(lambda row: dph(row['kus_DPH'], row['pozn']), axis=1)
+
+#%%
 dat = d.groupby(['subjekt', 'datum', 'typ']).kus_DPH.mean()
 
 #%%
@@ -35,5 +44,3 @@ with open('./data.json', 'w', encoding='utf-8') as f:
 
 # %%
 len(out.keys())
-
-# %%

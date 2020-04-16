@@ -6,8 +6,12 @@
         'FFP2': 'triangle',
         'FFP3': 'circle'
     }
+    let url = './'
+    if (window.location.hostname !== 'localhost') {
+        url = 'https://data.irozhlas.cz/respir-nakupy/'
+    }
 
-    fetch('./data.json')
+    fetch(url + 'data.json')
         .then((response) => response.json())
         .then((data) => {
             const srs = []
@@ -99,8 +103,6 @@
                     drw('min')
                     drw('kr')
                 })
-            })
-
-           
+            }) 
         })
 })()
