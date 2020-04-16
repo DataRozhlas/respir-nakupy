@@ -17,7 +17,8 @@ def dph(val, comm):
 d.kus_DPH = d.apply(lambda row: dph(row['kus_DPH'], row['pozn']), axis=1)
 
 #%%
-dat = d.groupby(['subjekt', 'datum', 'typ']).kus_DPH.mean()
+dat = d[['subjekt', 'datum', 'typ','kus_DPH']]
+#dat = d.groupby(['subjekt', 'datum', 'typ']).kus_DPH.mean()
 
 #%%
 data = pd.DataFrame(dat.reset_index())
@@ -37,6 +38,8 @@ for row in list(data.sort_values(by='datum').to_dict(orient='index').values()):
         ]
     )
 
+# %%
+out
 
 # %%
 with open('./data.json', 'w', encoding='utf-8') as f:
@@ -44,3 +47,6 @@ with open('./data.json', 'w', encoding='utf-8') as f:
 
 # %%
 len(out.keys())
+
+
+# %%
