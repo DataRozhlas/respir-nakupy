@@ -39,9 +39,6 @@ for row in list(data.sort_values(by='datum').to_dict(orient='index').values()):
     )
 
 # %%
-out
-
-# %%
 with open('./data.json', 'w', encoding='utf-8') as f:
     f.write(json.dumps(out, ensure_ascii=False))
 
