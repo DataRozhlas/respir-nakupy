@@ -34,7 +34,7 @@ for row in list(data.sort_values(by='datum').to_dict(orient='index').values()):
     out[row['subjekt']][row['typ']].append(
         [
             str(row['datum']),
-            row['kus_DPH']
+            round(row['kus_DPH'], 2)
         ]
     )
 
