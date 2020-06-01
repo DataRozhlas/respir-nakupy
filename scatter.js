@@ -17,7 +17,18 @@
         .then((response) => response.json())
         .then((data) => {
             const srs = []
-
+            Object.keys(data).forEach( (resort, i) => {
+                Object.keys(data[resort]).forEach(typ => {
+                    srs.push({
+                        name: resort + ' - ' + typ,
+                        marker: {
+                            symbol: syms[typ]
+                        },
+                        color: cols[i],
+                        data: data[resort][typ].map(val => [ Date.parse(val[0]), val[1] ])
+                    })                    
+                })
+            })
             function drw(topic) {
                 let tit = ' - ministerstva'
                 let fltr = true
@@ -92,19 +103,6 @@
                     series: srs.filter(s => s.name.includes('Ministerstvo') === fltr)
                 })
             }
-            
-            Object.keys(data).forEach( (resort, i) => {
-                Object.keys(data[resort]).forEach(typ => {
-                    srs.push({
-                        name: resort + ' - ' + typ,
-                        marker: {
-                            symbol: syms[typ]
-                        },
-                        color: cols[i],
-                        data: data[resort][typ].map(val => [ Date.parse(val[0]), val[1] ])
-                    })                    
-                })
-            })
             drw('min')
             drw('kr')
         })
